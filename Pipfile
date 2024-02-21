@@ -8,6 +8,9 @@ flask = "*"
 pymongo = "*"
 install = "*"
 flask-pymongo = "*"
+flask-bcrypt = "*"
+flask-jwt-extended = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

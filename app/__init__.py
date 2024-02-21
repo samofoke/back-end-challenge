@@ -1,15 +1,25 @@
 from flask import Flask
 from flask_pymongo import PyMongo;
 from pymongo.errors import ConnectionFailure
-from .config import Congig
+from flask_jwt_extended import JWTManager
+from flask_bcrypt import Bcrypt
+from .config import Config
+
 
 mongo = PyMongo()
+bcrypt = Bcrypt()
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(Congig)
+    app.config.from_object(Config)
 
     mongo.init_app(app)
+    bcrypt.init_app(app)
+
+    jwt = JWTManager(app)
+
+    from .blueprints.user_blueprint import user_blueprint
+    app.register_blueprint(user_blueprint, url_prefix="/api/v1")
 
     #MongoDb connection
     try:
