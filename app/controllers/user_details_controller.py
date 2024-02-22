@@ -43,8 +43,11 @@ def update_user_info(user_id):
 @jwt_required()
 def get_all_user_details():
      current_user = get_jwt_identity()
-     user = details_service.get_user_by_id(current_user)
-
+     user, user_error = details_service.get_user_by_id(current_user)
+     
+     if user_error:
+          return jsonify({"message": user_error}), 400
+     
      if user and user["role"] == "SUPER":
          all_users = details_service.get_all_users()
          return jsonify(all_users), 200
