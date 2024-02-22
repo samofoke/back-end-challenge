@@ -19,7 +19,9 @@ def create_app():
     jwt = JWTManager(app)
 
     from .blueprints.user_blueprint import user_blueprint
+    from .blueprints.details_blueprint import details_blueprint
     app.register_blueprint(user_blueprint, url_prefix="/api/v1")
+    app.register_blueprint(details_blueprint, url_prefix="/api/v1")
 
     #MongoDb connection
     try:

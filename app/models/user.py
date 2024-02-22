@@ -1,4 +1,5 @@
 from app import mongo, bcrypt
+from bson import ObjectId
 
 
 class User:
@@ -22,4 +23,8 @@ class User:
            "role": self.role
         }
         return mongo.db.users.insert_one(user_data)
+    
+    @staticmethod
+    def find_by_user_id(user_id):
+        return mongo.db.users.find_one({"_id": ObjectId(user_id)})
     
