@@ -7,12 +7,14 @@ import json
 @jwt_required()
 def get_user_details(user_id):
     current_user = get_jwt_identity()
-    user = details_service.get_user_by_id(current_user)
 
-    check_user_details = details_service.get_user_by_id(user_id)
-    if not check_user_details:
+    user, user_error = details_service.get_user_by_id(current_user)
+    if user_error:
+        return jsonify({"message": user_error}), 400
+
+    check_user_details, details_error = details_service.get_user_by_id(user_id)
+    if details_error or not check_user_details:
         return jsonify({"message": "User not found"}), 404
-    
 
     if user and (user["role"] in ["SUPER", "ADMIN"] or current_user == user_id):
         return jsonify(check_user_details), 200

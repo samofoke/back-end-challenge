@@ -1,14 +1,19 @@
 from app import mongo, bcrypt
 from pymongo.errors import PyMongoError
 from bson import ObjectId, json_util
+from bson.errors import InvalidId
 import json
 
 def get_user_by_id(user_id):
-    user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
-    if user:
-        user_json = json_util.dumps(user)
-        return json.loads(user_json)
-    return None
+    try:
+        user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+        if user:
+            user_json = json_util.dumps(user)
+            return json.loads(user_json), None
+    except InvalidId:
+        return None, "Invaalid user _id"
+    
+    return None, "User not found"
 
 def update_user(user_id, update_data):
     try:
