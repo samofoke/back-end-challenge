@@ -17,21 +17,24 @@ def get_user_by_id(user_id):
 
 def update_user(user_id, update_data):
     try:
-        check_user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+        object_id = ObjectId(user_id)
+        check_user = mongo.db.users.find_one({"_id": object_id})
         if not check_user:
             return None, "User not found"
+
         
         if "password" in update_data:
             update_data["password"] = bcrypt.generate_password_hash(update_data["password"]).decode("utf-8")
-             
-        mongo.db.users.update_one({"_id": ObjectId(user_id)}, {"$set": update_data})
 
-        updated_user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+        mongo.db.users.update_one({"_id": object_id}, {"$set": update_data})
+        updated_user = mongo.db.users.find_one({"_id": object_id})
         return updated_user, None
-    
+
+    except InvalidId:
+        return None, "Invalid user ID format"
     except PyMongoError as err:
         return None, str(err)
-
+    
 def get_all_users():
     users = mongo.db.users.find()
     user_list = []

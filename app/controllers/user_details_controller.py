@@ -24,7 +24,10 @@ def get_user_details(user_id):
 @jwt_required()   
 def update_user_info(user_id):
     current_user = get_jwt_identity()
-    user = details_service.get_user_by_id(current_user)
+    user, user_error = details_service.get_user_by_id(current_user)
+    
+    if user_error:
+        return jsonify({"message": user_error}), 400
 
     if user and (user["role"] in ["SUPER", "ADMIN"] or current_user == user_id):
         update_data = request.json
@@ -34,7 +37,7 @@ def update_user_info(user_id):
             return jsonify({"message": error}), 400
         if updated_user:
             updated_user_json = json_util.dumps(updated_user)
-            return jsonify({"messagge": "User updated successfully", "user": json.loads(updated_user_json)}), 200
+            return jsonify({"message": "User updated successfully", "user": json.loads(updated_user_json)}), 200
         else:
             return jsonify({"message": "Failed to update"}), 500
     else:
